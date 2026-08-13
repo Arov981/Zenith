@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zenith Mail - Premium Email Experience</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="logo">
+                <span class="logo-icon">Z</span>
+                <h1>Zenith</h1>
+            </div>
+            
+            <button class="compose-btn" onclick="showComposeModal()">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                </svg>
+                Compose
+            </button>
+            
+            <nav class="nav-menu">
+                <a href="#" class="nav-item active" onclick="loadInbox()">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                        <polyline points="22,6 12,13 2,6"></polyline>
+                    </svg>
+                    Inbox
+                    <span class="badge" id="inbox-count">3</span>
+                </a>
+                <a href="#" class="nav-item" onclick="loadSent()">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="22" y1="2" x2="11" y2="13"></line>
+                        <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                    </svg>
+                    Sent
+                </a>
+                <a href="#" class="nav-item" onclick="loadDrafts()">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                        <polyline points="14 2 14 8 20 8"></polyline>
+                        <line x1="16" y1="13" x2="8" y2="13"></line>
+                        <line x1="16" y1="17" x2="8" y2="17"></line>
+                        <polyline points="10 9 9 9 8 9"></polyline>
+                    </svg>
+                    Drafts
+                </a>
+                <a href="#" class="nav-item" onclick="loadTrash()">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="3 6 5 6 21 6"></polyline>
+                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                    </svg>
+                    Trash
+                </a>
+            </nav>
+            
+            <div class="user-info">
+                <div class="avatar" id="user-avatar">U</div>
+                <div class="user-details">
+                    <span class="user-email" id="current-user">user@zenith.com</span>
+                </div>
+            </div>
+        </aside>
+        
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="top-bar">
+                <div class="search-box">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                    </svg>
+                    <input type="text" placeholder="Search in Zenith..." id="search-input">
+                </div>
+                <div class="header-actions">
+                    <button class="icon-btn" title="Settings">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="3"></circle>
+                            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                        </svg>
+                    </button>
+                </div>
+            </header>
+            
+            <div class="email-list-container" id="email-list">
+                <!-- Emails will be loaded here -->
+            </div>
+        </main>
+    </div>
+    
+    <!-- Compose Modal -->
+    <div class="modal-overlay" id="compose-modal">
+        <div class="modal compose-modal">
+            <div class="modal-header">
+                <h2>New Message</h2>
+                <button class="close-btn" onclick="hideComposeModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="compose-form" onsubmit="sendEmail(event)">
+                    <div class="form-group">
+                        <label>To:</label>
+                        <input type="email" id="to-email" required placeholder="recipient@example.com">
+                    </div>
+                    <div class="form-group">
+                        <label>Subject:</label>
+                        <input type="text" id="email-subject" required placeholder="Enter subject">
+                    </div>
+                    <div class="form-group">
+                        <label>Message:</label>
+                        <textarea id="email-body" rows="10" required placeholder="Write your message..."></textarea>
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="send-btn">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <line x1="22" y1="2" x2="11" y2="13"></line>
+                                <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                            </svg>
+                            Send
+                        </button>
+                        <button type="button" class="discard-btn" onclick="hideComposeModal()">Discard</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Notification Toast -->
+    <div class="toast" id="toast"></div>
+    
+    <script src="app.js"></script>
+</body>
+</html>
