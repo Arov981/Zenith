@@ -1,0 +1,19 @@
+services:
+  backend:
+    build: ./backend
+    env:
+      - FLASK_ENV=production
+      - SMTP_SERVER=smtp.gmail.com
+      - SMTP_PORT=587
+      - SMTP_USERNAME=${SMTP_USERNAME}
+      - SMTP_PASSWORD=${SMTP_PASSWORD}
+    name: zenith-backend
+    plan: free
+    healthCheckPath: /api/health
+    dockerCommand: gunicorn --bind 0.0.0.0:5000 --workers 4 app:app
+
+  frontend:
+    build: ./frontend
+    name: zenith-frontend
+    plan: free
+    staticPublishPath: ./frontend

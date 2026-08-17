@@ -1,24 +1,54 @@
 ```
 # Python
 __pycache__/
-*.pyc
-*.pyo
-*.pyd
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
 
-# Environment variables
-.env
-.env.local
-.env.*
-
-# Dependencies
-venv/
+# Environment
 .venv/
+venv/
+env/
+ENV/
 
 # Logs
 *.log
 
-# Temporary files
-*.tmp
+# IDE
+.vscode/
+.idea/
 *.swp
-*~
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Coverage
+.coverage
+coverage/
+htmlcov/
+
+# Testing
+.pytest_cache/
+.mypy_cache/
+
+# Distribution / packaging
+.pybuild/
 ```

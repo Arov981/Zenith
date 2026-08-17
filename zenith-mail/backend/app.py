@@ -13,12 +13,17 @@ CORS(app)
 emails_db = []
 sent_emails_db = []
 
-# Email configuration - You need to configure these with your SMTP credentials
+# Email configuration
 SMTP_SERVER = os.getenv('SMTP_SERVER', 'smtp.gmail.com')
 SMTP_PORT = int(os.getenv('SMTP_PORT', '587'))
 SMTP_USERNAME = os.getenv('SMTP_USERNAME', '')
 SMTP_PASSWORD = os.getenv('SMTP_PASSWORD', '')
 ZENITH_DOMAIN = '@zenith.com'
+
+
+def is_zenith_email(email):
+    """Check if email is a @zenith.com address"""
+    return email and email.endswith(ZENITH_DOMAIN)
 
 
 @app.route('/api/health', methods=['GET'])
@@ -29,7 +34,7 @@ def health_check():
 
 @app.route('/api/send-email', methods=['POST'])
 def send_email():
-    """Send an email to any recipient"""
+    """Send an email - internal for @zenith.com, external via SMTP for others"""
     try:
         data = request.json
         to_email = data.get('to')
@@ -40,7 +45,42 @@ def send_email():
         if not to_email or not subject or not body:
             return jsonify({'error': 'Missing required fields: to, subject, body'}), 400
         
-        # If SMTP credentials are configured, send real email
+        # Create the email record
+        email_record = {
+            'id': len(emails_db) + 1,
+            'from': from_email,
+            'to': to_email,
+            'subject': subject,
+            'body': body,
+            'timestamp': datetime.now().isoformat(),
+            'read': False,
+            'folder': 'inbox'
+        }
+        
+        sent_email_record = {
+            'id': len(sent_emails_db) + 1,
+            'from': from_email,
+            'to': to_email,
+            'subject': subject,
+            'body': body,
+            'timestamp': datetime.now().isoformat(),
+            'status': 'sent'
+        }
+        
+        # Check if sending to another @zenith.com address
+        if is_zenith_email(to_email):
+            # Internal Zenith-to-Zenith delivery - instant!
+            emails_db.append(email_record)
+            sent_emails_db.append(sent_email_record)
+            
+            return jsonify({
+                'success': True,
+                'message': f'Email sent to {to_email} successfully!',
+                'email_id': email_record['id'],
+                'internal_delivery': True
+            })
+        
+        # External email - requires SMTP
         if SMTP_USERNAME and SMTP_PASSWORD:
             try:
                 msg = MIMEMultipart()
@@ -55,44 +95,27 @@ def send_email():
                 server.send_message(msg)
                 server.quit()
                 
-                # Store sent email
-                sent_email = {
-                    'id': len(sent_emails_db) + 1,
-                    'from': from_email,
-                    'to': to_email,
-                    'subject': subject,
-                    'body': body,
-                    'timestamp': datetime.now().isoformat(),
-                    'status': 'sent'
-                }
-                sent_emails_db.append(sent_email)
+                sent_emails_db.append(sent_email_record)
                 
                 return jsonify({
                     'success': True,
                     'message': 'Email sent successfully!',
-                    'email_id': sent_email['id']
+                    'email_id': sent_email_record['id'],
+                    'internal_delivery': False
                 })
                 
             except Exception as e:
                 return jsonify({'error': f'Failed to send email: {str(e)}'}), 500
         else:
-            # Demo mode - store email but don't actually send
-            sent_email = {
-                'id': len(sent_emails_db) + 1,
-                'from': from_email,
-                'to': to_email,
-                'subject': subject,
-                'body': body,
-                'timestamp': datetime.now().isoformat(),
-                'status': 'demo_mode'
-            }
-            sent_emails_db.append(sent_email)
+            # Demo mode for external emails
+            sent_emails_db.append(sent_email_record)
             
             return jsonify({
                 'success': True,
-                'message': 'Email saved (Demo mode - configure SMTP to send real emails)',
-                'email_id': sent_email['id'],
-                'demo_mode': True
+                'message': f'Email saved (Demo mode - {to_email} is external, configure SMTP to send real emails)',
+                'email_id': sent_email_record['id'],
+                'demo_mode': True,
+                'internal_delivery': False
             })
             
     except Exception as e:
